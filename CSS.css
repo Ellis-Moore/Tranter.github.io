@@ -1,0 +1,56 @@
+body, html{
+            width:  100%;
+            height: 100%;
+        }
+.position{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate( -50%, -50%)
+}
+
+.header{
+  font-size: 52px;
+  line-height: 1.375em;
+  color: #FFFFFF;
+  font-weight: 400;
+  margin-bottom: 30px;
+  }
+
+.jumbotron {
+    background-color: #262626;
+    font-size: 20px;
+    right:0;
+    left:0;
+    font-family: Montserrat, sans-serif;
+}
+.text-box{
+    background-color: #D3D3D3;
+    width: 80%;
+    height: 100%;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.login-form{
+    background-color: #DCDCDC;
+    
+    padding: 30px;
+    width: 50%; /* Could be more or less, depending on screen size */
+}
+
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+      
+img.avatar {
+    width: 40%;
+    border-radius: 50%;
+    animation: spin 2.4s cubic-bezier(.4, .2, 0, 1) both, colorize 300ms 700ms linear both;
+}

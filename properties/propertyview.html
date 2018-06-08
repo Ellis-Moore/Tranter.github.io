@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<?php 
+			require_once 'login-files/access.php' ;
+			require_once 'login-files/config.php';
+?>
+<html>
+<head>
+    <title>TFP Management System</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">   
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="property.css">
+    
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    
+    <script>
+        $(document).ready(function(){   
+            function verifytoken(){
+                    if(sessionStorage.getItem("token") == null){
+                        alert("No token found")
+                        window.location.assign("../first.html")
+                    }
+                    
+                    // creates key-value pair to be posted
+                    var token = {token: sessionStorage.getItem("token")}
+                    // Posting proccess of sending of key-value pair
+                    var posting = $.post("../Login-files/verifyJWT.php",
+                            JSON.stringify(token),
+                                        
+                                function(data){
+                               
+                                // If unsuccessful boot user off page
+                                if(data[0] != true) {
+										alert("Invalid token found.");
+                                        window.location.assign("index.html")
+									}else{
+                                        // Collect login data 
+                                        var logindata = data[1]
+                                        
+                                        console.log(logindata)
+                                        // store data in sessionStorage for later use 
+                                        sessionStorage.setItem("landlordID", logindata.userId)
+                                        sessionStorage.setItem("loginTime", logindata.loginTime)
+                                        sessionStorage.setItem("loginDate", logindata.loginDate)
+                                        sessionStorage.setItem("username", logindata.username)
+									    
+                                        
+										
+									}
+                                })
+                }
+            
+            $("#Request").on( "click", function(){
+                sessionStorage.setItem("Search", $("#myInput").val())
+                console.log(sessionStorage.getItem("Search"))
+                window.location.assign("tenantview.html")
+                
+            })
+            function myFunction(){
+                
+            }
+            
+            function generateTable(){
+                if(sessionStorage.getItem("Search") == 'undefined' || sessionStorage.getItem("Search") == ''){
+                    var Search = ""
+                }else{
+                    var Search = sessionStorage.getItem("Search")
+                }
+                if(sessionStorage.getItem("wrong_search") != ""){
+                    var table = "<div class='isa_error'>Property '"+ sessionStorage.getItem("wrong_search") +"' was not found</div><button>remove message</button>"
+                    sessionStorage.setItem("wrong_search", "")
+                }else{
+                    var table = ""
+                }
+                table += "<table><tr><th>ID</th><th style='width: 40%;'>Address</th><th>Village</th><th>City</th><th>Post code</th></tr>"
+                
+                var request = {address:Search}
+                var posting = $.post("fetchProperties.php",
+							JSON.stringify(request),
+							function(properties){
+                            console.log(properties)
+                            if(properties.length == 0){
+                                
+                                sessionStorage.setItem("wrong_search", sessionStorage.getItem("Search"))
+                                sessionStorage.setItem("Search", "")
+                                
+                                window.location.assign("propertyview.html")
+                            }else{
+                                $.each( properties, function(key, property){
+                                    console.log(property.propertyID)
+                                        table += "<tr><td>" + property.propertyID + "</td><td><a href='#'>" + property.streetAddress + "</a></td><td>" + property.village + "</td><td>" + property.city + "</td><td><a href='#'>" + property.postCode  + "</a></td></tr>"
+
+                                console.log(table)  
+                                })
+                            }
+                    $("#table").html(table)
+                })
+                
+                }
+             generateTable();                      
+        })
+        
+        
+    </script>
+</head>
+    
+<body background="../images/shattered-island.gif">
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+        </div>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <center><h2 class="titletext" colour= "#fff" >TFP (Wakefield LTD) </h2></center>
+        </div>
+    </nav>
+    <br>
+        
+        <div class="col-sm-1 tool-box" >
+            <ul>
+              <li><a href="../dashboard.html">Dashboard</a></li>
+              <li><a href="../tenants/tenantview.html">Tenants</a></li>
+              <li><a href="propertyview.html">Properties</a></li>
+              <li><a href="#">About</a></li>
+              <br>
+              <li><a class="logoutbtn" href="../index.html">Logout</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 tenant-table">
+            <center style="padding-top: 50px;">
+                <input type="text" id="myInput" placeholder="Search for property.." title="Type in a name" class="col-sm-9 searchbar"><button>Search</button>
+                
+                  <div id="slider" class="tenant-table">
+                    <div id=table class="vertical-menu">
+
+                    </div>
+                    
+                </div>
+                
+            </center>
+        </div>
+    
+    
+   
+  
+    
+</body>
+</html>

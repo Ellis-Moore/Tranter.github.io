@@ -1,0 +1,151 @@
+.navbar {
+   
+      background-color: #262626;
+      z-index: 9999;
+      border: 0;
+      font-size: 12px !important;
+      line-height: 1.42857143 !important;
+      letter-spacing: 4px;
+      color: #FFFFFF;
+      border-radius: 0;
+      font-family: Montserrat, sans-serif;
+      height: 100px;
+  }
+.navbtnleft {
+    left: 70px;
+    bottom: 55px;
+    margin-right: 50px;
+}
+
+.titletext{
+    padding-top:20px;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    
+    width: 200px;
+    background-color: #f1f1f1;
+}
+
+li a {
+    display: block;
+    color: #000;
+    padding-top: 20%;
+    padding: 40px 0px;
+    text-decoration: none;
+    text-align: center;
+}
+
+/* Change the link color on hover */
+li a:hover {
+    background-color: #555;
+    color: white;
+}
+.tool-box{
+    background-color: #D3D3D3;
+    font-size: 16px;
+    position: relative;
+    display: flex;
+    box-sizing: content-box;
+    position: fixed;
+    top: 0;
+    padding-top: 100px;
+    height: 100%;
+}
+
+  .navbar li a, .navbar .navbar-brand {
+      color: #000 !important;
+  }
+  .navbar-nav li a:hover, .navbar-nav li.active a {
+      color: #000000 !important;
+      background-color: #fff !important;
+      
+  }
+  .navbar-default .navbar-toggle {
+      border-color: transparent;
+      color: #fff !important;
+  }
+.tenant-table{
+    margin-left: 10%;
+    margin-top: 7%;
+}
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.searchbar{
+    margin-left: 100px;
+    width:80%;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+td, th {
+    border: 1px solid #000000;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #F5F5F5;
+}
+tr:nth-child(odd) {
+    background-color: #dddddd;
+}
+img.avatar {
+    margin-left: 3%;
+    margin-right: 3%;
+    width: 10%;
+    border-radius: 5%;
+    animation: spin 2.4s cubic-bezier(.4, .2, 0, 1) both, colorize 300ms 700ms linear both;
+}
+.box{
+    background-color: lightgrey;
+    margin-left: 200px;
+    padding: 25px;
+    width: 83%;
+    margin-right: 200px;
+    margin-top: 9%;
+}
+.contactbox{
+    background-color: lightgrey;
+    margin-left: 200px;
+    padding: 25px;
+    width: 35%;
+    margin-right: 200px;
+    margin-top: 7%;
+}
+
+.vertical-menu {
+    height: 600px;
+    overflow-y: auto;
+}
+
+.isa_info, .isa_success, .isa_warning, .isa_error {
+    margin: 10px 0px;
+    padding:12px;
+ 
+}
+.isa_info {
+    color: #00529B;
+    background-color: #BDE5F8;
+}
+.isa_success {
+    color: #4F8A10;
+    background-color: #DFF2BF;
+}
+.isa_warning {
+    color: #9F6000;
+    background-color: #FEEFB3;
+}
+.isa_error {
+    color: #D8000C;
+    background-color: #FFD2D2;
+}

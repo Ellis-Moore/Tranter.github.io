@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<?php 
+			require_once 'login-files/access.php' ;
+			require_once 'login-files/config.php';
+?>
+<html>
+<head>
+    <title>TFP Management System</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">   
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="tenants.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    
+    <script>
+        $(document).ready(function(){   
+            function verifytoken(){
+                    /**
+                    *  Functon to check token if login was validated 
+                    
+                    *  VARIABLES
+                    *   sessionStorage.getItem("token")    string   Holds the previosly set value of token from when logged in 
+                    *   token                              key-value pair   Data sent to php document to be validated containing token 
+                    
+                    *  ALGORITHM
+                    
+                    *  IF Token doesn't exist in session storage THEN
+                    *       Send user back to login page
+                    *  END IF 
+                    
+                    *  token <- Object(Token)
+                    *  Post token to verifyJWT.php
+                    *  IF JSON.strigify(Token) != true
+                    *       Send user back to login page
+                    *  ELSE
+                    *       Store login data and continue with session
+                    *  END IF 
+                    
+                    */
+                    
+                    // Checks if there's any token at all if true returns you to login page 
+                    if(sessionStorage.getItem("token") == null){
+                        alert("No token found")
+                        window.location.assign("../first.html")
+                    }
+                    
+                    // creates key-value pair to be posted
+                    var token = {token: sessionStorage.getItem("token")}
+                    // Posting proccess of sending of key-value pair
+                    var posting = $.post("../Login-files/verifyJWT.php",
+                            JSON.stringify(token),
+                                        
+                                function(data){
+                               
+                                // If unsuccessful boot user off page
+                                if(data[0] != true) {
+										alert("Invalid token found.");
+                                        window.location.assign("index.html")
+									}else{
+                                        // Collect login data 
+                                        var logindata = data[1]
+                                        
+                                        console.log(logindata)
+                                        // store data in sessionStorage for later use 
+                                        sessionStorage.setItem("landlordID", logindata.userId)
+                                        sessionStorage.setItem("loginTime", logindata.loginTime)
+                                        sessionStorage.setItem("loginDate", logindata.loginDate)
+                                        sessionStorage.setItem("username", logindata.username)
+									    
+                                        
+										
+									}
+                                })
+                }
+            
+            $("#Request").on( "click", function(){
+                // Capture input 
+                sessionStorage.setItem("Search", $("#myInput").val())
+                // Refresh page
+                window.location.assign("tenantview.html")
+            })
+            
+            function enterListener(){
+                var input = document.getElementById("myInput");
+                // Execute a function when the user releases a key on the keyboard
+                input.addEventListener("keyup", function(event) {
+                  // Cancel the default action, if needed
+                  event.preventDefault();
+                  // Number 13 is the "Enter" key on the keyboard
+                  if (event.keyCode === 13) {
+                    // Trigger the button element with a click
+                    document.getElementById("Request").click();
+                  }
+                })
+            }
+            
+            function emptySearch(){
+                var table = "<div class='isa_error'>Tenant '"+ sessionStorage.getItem("Search") +"' was not found</div><button onclick='window.location.assign(`tenantview.html`)'>remove message</button>"
+                sessionStorage.removeItem("Search")
+                $("#table").html(table)
+            }
+            
+            function generateTable(){
+                var Search = sessionStorage.getItem("Search")
+                
+                var table = "<table><tr><th>ID</th><th style='width: 40%;'>Tenant</th><th>Phone</th><th>E-mail</th></tr>"                
+
+                var request = {Surname:Search}
+                var posting = $.post("fetchTenants.php",
+                            JSON.stringify(request),
+                            function(tenants){
+                            if(tenants.length < 1){
+                                emptySearch()
+                            }
+                                $.each( tenants, function(key, tenant){
+                                    
+                                        table += "<tr><td>" + tenant.tenantID + "</td><td><a href='#'>" + tenant.tenantForename + "  " + tenant.tenantSurname + "</a></td><td>" + tenant.tenantPhone + "</td><td><a href='#'>" + tenant.tenantEmail + "</a></td></tr>"
+                                    $("#table").html(table)
+                                })
+                            })
+                            
+                       
+                  }
+            
+            
+            enterListener()        
+            generateTable();                      
+        })
+        
+    </script>
+</head>
+    
+<body background="../images/shattered-island.gif">
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+        </div>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <center><h2 class="titletext" colour= "#fff" >TFP (Wakefield LTD) </h2></center>
+        </div>
+    </nav>
+    <br>
+        
+        <div class="col-sm-1 tool-box" >
+            <ul>
+              <li><a href="../dashboard.html">Dashboard</a></li>
+              <li><a href="tenantview.html">Tenants</a></li>
+              <li><a href="../properties/propertyview.html">Properties</a></li>
+              <li><a href="#">About</a></li>
+              <br>
+              <li><a class="logoutbtn" href="../index.html">Logout</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 tenant-table">
+            <center style="padding-top: 50px;">
+                <input type="text" id="myInput" placeholder="Search for tenant.." title="Type in a name" class="col-sm-9 searchbar"><button id="Request">Search</button>
+                <div id="slider" class="tenant-table">
+                    <div id=table class="vertical-menu">
+
+                    </div>
+                    
+                </div>
+            </center>
+        </div>
+    
+    
+   
+  
+    
+</body>
+</html>

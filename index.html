@@ -1,0 +1,153 @@
+w<!DOCTYPE html>
+<?php 
+			require_once 'login-files/access.php' ;
+			require_once 'login-files/config.php';
+?>
+<html>
+<head>
+    <title>TFP Management System</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">   
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="CSS.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    
+    <script>
+        $(document).ready(function(){
+            $("#loginbtn").on( "click", function(){
+                    // Call getLogin function upon pressing login button
+					getlogin()
+            })
+            $("#uname").on( "keyup", function(event){
+                if (event.keyCode === 13) {
+                    getlogin();
+                }
+            })
+            $("#psw").on( "keyup", function(event){
+                if (event.keyCode === 13) {
+                    getlogin();
+                }
+            })
+            
+            
+            function getlogin(){
+					/* 
+                    Purpose of this function is to collect entered data to login a potential user in 
+                    
+                    VARIABLES
+                    
+                    login       key-value-pair  object containing entered username and password
+                    posting     JSON post       Sends login object to PHP file to be validataed
+                    Wronglogins Integer         Collects number of wrong login attempts made by user 
+                    out         String          String containing messgae about how too mnay logins have been made
+                    token       String          Token created for user
+                    
+                    ALGORITHM 
+                    
+                    Login <- Object (username, password)
+                    
+                    IF Username or password are not empty THEN 
+                        Post Login Object to Login.php
+                            Record response and act accordingly
+                            IF Response != "Succes" (String) THEN
+                                IF Wrong login THEN
+                                    OUTPUT number of wrong attempts
+                                END IF
+                                IF too many atempts THEN
+                                    OUTPUT too many login attempts
+                                END IF
+                            ELSE
+                                Store token
+                                Store Username
+                                Send user to navigation page
+                            END IF
+                    END IF
+                    */
+					
+                
+                    var login = {username : $("#uname").val(), password : $("#psw").val() }
+                    
+                    if ($("#uname").val() != "" && $("#psw").val() != "") {
+                        var posting = $.post("Login-files/login.php",JSON.stringify(login),
+                        function(data){
+                            
+                            if(data[0] != "success") {
+                                
+                               if(data[0] == "wronglogin"){
+									var wronglogins = data[1][0].wrong_logins 
+                                    wronglogin(wronglogins)
+                                }
+                                
+								if(data[0] == "Unpermitted"){
+									var out = "<font color='red' > Too many login attempts made.</font>" 
+								    $('#wronglogins').html(out)
+								}
+                                
+                            }else{
+                                
+                                var token = data[1]
+                                sessionStorage.setItem("token", token)
+                                sessionStorage.setItem("Username", data[2])
+                                window.location.assign("bounce.html")
+                                
+                            }
+                        })
+                        .done(function(msg) {})
+                    }
+
+            }
+            function wronglogin(wronglogins){
+            /*
+            This function outputs the number of wrong login attempts made on account 
+
+            VARIABLES 
+                out     string      used to be outputted to display number of wrong login attempts 
+
+            */
+            var out = ""
+            out += "<font color='red' > Wrong logins : "+  wronglogins +"</font>" 
+            $('#wronglogins').html(out)
+        }
+        })
+        
+    </script>
+</head>
+    
+<body background="images/shattered-island.gif">
+    <center>
+        <div class="container">
+            <div class="jumbotron">
+                <h2 class="header" style="color:#A9A9A9;">Tranter Finance & Property</h2>
+                <h3 style="color:#A9A9A9;">Property management tool</h3>
+            </div>
+            <div class="container">
+                    <div class="container login-form">
+                                              
+                        <label><b>Username</b></label>
+                        <input type="text" placeholder="Enter Username" name="uname" id="uname" required>
+                        <br>
+                        <label><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+                        <br>
+                        <input type=submit value="Log in"  id="loginbtn" >
+                        <!--<button type="button" style="margin-top:20px;" id="loginbtn" onclick="return getlogin();">Login</button> -->
+
+                        <br>
+                        <div id="wronglogins"> 
+                        </div>
+                    </div>
+               
+            </div>
+        </div>
+    </center>
+    
+   
+  
+    
+</body>
+</html>
